@@ -28,7 +28,7 @@ const Home = (): JSX.Element => {
 
 
   function handleAddProduct(id: number){
-    //addProduct();
+    addProduct(id);
   }
 
   return (

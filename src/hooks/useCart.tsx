@@ -41,7 +41,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-
+      await setCart(products.filter((item) => item.id === productId));
     } catch {
       toast.error('Erro na adição do produto');
     }
