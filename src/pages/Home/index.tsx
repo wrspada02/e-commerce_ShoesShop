@@ -18,18 +18,8 @@ interface CartItemsAmount {
 
 const Home = (): JSX.Element => {
 
-  const [products, setProducts] = useState<ProductFormatted[]>([]);
-  const { addProduct, cart } = useCart();
 
-
-  useEffect(() => {
-    async function loadProducts(){
-      await api.get('/products')
-      .then(response => setProducts(response.data));
-    }
-
-    loadProducts();
-  }, []);
+  const { addProduct, cart, products } = useCart();
 
   //const cartItemsAmount = cart.reduce((sumAmount, product) => {
      // TODO
@@ -37,8 +27,8 @@ const Home = (): JSX.Element => {
 
 
 
-  function handleAddProduct(itemList: Product){
-    addProduct(itemList);
+  function handleAddProduct(id: number){
+    //addProduct();
   }
 
   return (
@@ -51,7 +41,7 @@ const Home = (): JSX.Element => {
               <button
                 type="button"
                 data-testid="add-product-button"
-                onClick={() => handleAddProduct(item)}
+                onClick={() => handleAddProduct(item.id)}
               >
                 <div data-testid="cart-product-quantity" style={{cursor: 'pointer'}}>
                   <MdAddShoppingCart size={16} color="#FFF"/>

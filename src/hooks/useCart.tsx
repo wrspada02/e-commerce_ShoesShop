@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { api } from '../services/api';
 import { Product, Stock } from '../types';
+import { ProductFormatted } from "../pages/Home/index";
 
 interface CartProviderProps {
   children: ReactNode;
@@ -14,7 +15,8 @@ interface UpdateProductAmount {
 
 interface CartContextData {
   cart: Product[];
-  addProduct: (item: Product) => Promise<void>;
+  products: ProductFormatted[];
+  addProduct: (productId: number) => Promise<void>;
   removeProduct: (productId: number) => void;
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
 }
@@ -22,21 +24,24 @@ interface CartContextData {
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
+  const [products, setProducts] = useState<ProductFormatted[]>([]);
   const [cart, setCart] = useState<Product[]>(() => {
 
     return [];
   });
 
-  const addProduct = async (item: Product) => {
+  useEffect(() => {
+    async function loadProducts(){
+      await api.get('/products')
+      .then(response => setProducts(response.data));
+    }
+
+    loadProducts();
+  }, []);
+
+  const addProduct = async (productId: number) => {
     try {
-      await setCart([...cart, {
-        id: item.id,
-        amount: item.amount,
-        image: item.image,
-        price: item.price,
-        title: item.title,
-      }]);
-      console.log(cart);
+
     } catch {
       toast.error('Erro na adição do produto');
     }
@@ -60,7 +65,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   return (
     <CartContext.Provider
-      value={{ cart, addProduct, removeProduct, updateProductAmount }}
+      value={{ cart, products, addProduct, removeProduct, updateProductAmount }}
     >
       {children}
     </CartContext.Provider>
