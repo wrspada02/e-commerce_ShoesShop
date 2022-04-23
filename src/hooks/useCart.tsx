@@ -39,12 +39,13 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const addProduct = async (productId: number) => {
     try {
       const newItem = products.filter((item) => item.id === productId);
+      const [{amount, id, image, price, title}] = newItem;
       await setCart([...cart, {
-        id: 2,
-        amount: 200,
-        image: 'https://upload.wikimedia.org/wikipedia/pt/e/ed/Shrek%28personagem%29.jpg',
-        price: 400.56,
-        title: 'test'
+        id: id,
+        amount: amount,
+        image: image,
+        price: price,
+        title: title,
       }]);
     } catch {
       toast.error('Erro na adição do produto');
