@@ -1,4 +1,4 @@
-  import React from 'react';
+
   import {
     MdDelete,
     MdAddCircleOutline,
@@ -26,9 +26,9 @@
     // const total =
     //   formatPrice(
     //     cart.reduce((sumTotal, product) => {
-    //       // TODO
+    //       sumTotal += product.price * product.amount
     //     }, 0)
-    //   )
+    //   );
 
     function handleProductIncrement(product: Product) {
       // TODO
@@ -55,7 +55,7 @@
             </tr>
           </thead>
             {cart.map((item) => (
-              <tbody>
+              <tbody key={item.id}>
               <tr data-testid="product">
               <td>
                 <img src={item.image} alt={item.title}/>
@@ -77,20 +77,19 @@
                   <input
                     type="text"
                     data-testid="product-amount"
-                    readOnly
-                    value={2}
                   />
                   <button
                     type="button"
                     data-testid="increment-product"
-                  // onClick={() => handleProductIncrement()}
+                  //disabled={input.value >=item.amount}  
+                  //onClick={() => handleProductIncrement()}
                   >
                     <MdAddCircleOutline size={20} />
                   </button>
                 </div>
               </td>
               <td>
-                <strong>R$ {item.price}0</strong>
+                <strong>{formatPrice(item.price)}</strong>
               </td>
               <td>
                 <button
@@ -111,7 +110,7 @@
 
           <Total>
             <span>TOTAL</span>
-            <strong>R$ 359,80</strong>
+            <strong></strong>
           </Total>
         </footer>
       </Container>

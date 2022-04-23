@@ -17,7 +17,7 @@ interface CartContextData {
   cart: Product[];
   products: ProductFormatted[];
   addProduct: (productId: number) => Promise<void>;
-  removeProduct: (productId: number) => void;
+  removeProduct: (productId: number) => Promise<void>;
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
 }
 
@@ -25,10 +25,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
-  const [cart, setCart] = useState<Product[]>(() => {
-
-    return [];
-  });
+  const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
     async function loadProducts(){
@@ -41,19 +38,26 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      await setCart(products.filter((item) => item.id === productId));
+      const newItem = products.filter((item) => item.id === productId);
+      await setCart([...cart, {
+        id: 2,
+        amount: 200,
+        image: 'https://upload.wikimedia.org/wikipedia/pt/e/ed/Shrek%28personagem%29.jpg',
+        price: 400.56,
+        title: 'test'
+      }]);
     } catch {
       toast.error('Erro na adição do produto');
     }
   };
 
-  const removeProduct = (productID: number) => {
+  const removeProduct = async (productID: number) => {
     try {
       const removeItem = cart.findIndex((item) => item.id === productID);
       const newArrayProducts = cart;
       newArrayProducts.splice(removeItem, 1);
 
-      setCart(newArrayProducts);
+      await setCart(newArrayProducts);
     } catch {
       toast.error('Erro na remoção do produto');
     }
