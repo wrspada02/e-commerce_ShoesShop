@@ -31,11 +31,14 @@
     //   );
 
     function handleProductIncrement(product: Product) {
-      // TODO
+      
     }
 
-    function handleProductDecrement(product: Product) {
-      // TODO
+    function handleProductDecrement(product: Product){
+      const { id, amount} = product;
+      const productId = id;
+      console.log(amount);
+      updateProductAmount({productId, amount});
     }
 
     function handleRemoveProduct(productId: number) {
@@ -69,14 +72,15 @@
                   <button
                     type="button"
                     data-testid="decrement-product"
-                  // disabled={product.amount <= 1}
-                  // onClick={() => handleProductDecrement()}
+                    disabled={item.amount <= 1}
+                    onClick={() => handleProductDecrement(item)}
                   >
                     <MdRemoveCircleOutline size={20} />
                   </button>
                   <input
                     type="text"
                     data-testid="product-amount"
+                    value={5}
                   />
                   <button
                     type="button"

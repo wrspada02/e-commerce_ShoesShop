@@ -32,7 +32,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       await api.get('/products')
       .then(response => setProducts(response.data));
     }
-
+    
     loadProducts();
   }, []);
 
@@ -55,7 +55,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const removeProduct = async (productID: number) => {
     try {
       const removeItem = cart.findIndex((item) => item.id === productID);
-      const newArrayProducts = cart;
+      const newArrayProducts = [...cart];
       newArrayProducts.splice(removeItem, 1);
 
       await setCart(newArrayProducts);
@@ -64,9 +64,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
   };
 
-  const updateProductAmount = async ({ productId, amount }: UpdateProductAmount) => {
+  const updateProductAmount = async ({productId, amount} : UpdateProductAmount) => {
     try {
-      // TODO
+      cart.forEach((item) => {
+        if(item.id === productId){}
+      });
     } catch {
       toast.error('Quantidade solicitada fora de estoque');
     }
