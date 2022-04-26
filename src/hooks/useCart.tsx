@@ -16,6 +16,7 @@ interface UpdateProductAmount {
 interface CartContextData {
   cart: Product[];
   products: ProductFormatted[];
+  amount: Stock[];
   addProduct: (productId: number) => Promise<void>;
   removeProduct: (productId: number) => Promise<void>;
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
@@ -25,6 +26,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
+  const [amount, setAmount] = useState<Stock[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -32,17 +34,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       await api.get('/products')
       .then(response => setProducts(response.data));
     }
-    
+
+    async function loadAmount(){
+      await api.get('/stock')
+      .then(response => setAmount(response.data));
+    }
+
     loadProducts();
+    loadAmount();
   }, []);
 
   const addProduct = async (productId: number) => {
     try {
       const newItem = products.filter((item) => item.id === productId);
-      const [{amount, id, image, price, title}] = newItem;
+      const [{ id, image, price, title }] = newItem;
       await setCart([...cart, {
         id: id,
-        amount: amount,
+        amount: 5,
         image: image,
         price: price,
         title: title,
@@ -64,11 +72,14 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
   };
 
-  const updateProductAmount = async ({productId, amount} : UpdateProductAmount) => {
+  const updateProductAmount = ({productId, amount} : UpdateProductAmount) => {
     try {
-      cart.forEach((item) => {
-        if(item.id === productId){}
+      const cartToUpdate = cart;
+      cartToUpdate.map((item) => {
+        if(productId === item.id) return item.amount -= 1;
       });
+      console.log(cartToUpdate);
+      setCart(cartToUpdate);
     } catch {
       toast.error('Quantidade solicitada fora de estoque');
     }
@@ -76,7 +87,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   return (
     <CartContext.Provider
-      value={{ cart, products, addProduct, removeProduct, updateProductAmount }}
+      value={{ cart, products, amount, addProduct, removeProduct, updateProductAmount }}
     >
       {children}
     </CartContext.Provider>

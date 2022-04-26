@@ -35,9 +35,8 @@
     }
 
     function handleProductDecrement(product: Product){
-      const { id, amount} = product;
+      const { id, amount } = product;
       const productId = id;
-      console.log(amount);
       updateProductAmount({productId, amount});
     }
 
@@ -80,7 +79,7 @@
                   <input
                     type="text"
                     data-testid="product-amount"
-                    value={5}
+                    value={item.amount}
                   />
                   <button
                     type="button"
