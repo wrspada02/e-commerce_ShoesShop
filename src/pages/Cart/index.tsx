@@ -18,7 +18,7 @@
   }
 
   const Cart = (): JSX.Element => {
-    const { cart, setCart, removeProduct, updateProductAmount } = useCart();
+    const { cart, totalAmount, setCart, removeProduct, updateProductAmount } = useCart();
 
     // const cartFormatted = cart.map(product => ({
     //   // TODO
@@ -31,13 +31,19 @@
     //   );
 
     function handleProductIncrement(product: Product) {
+      const { id } = product;
+      const amountItem = totalAmount[id].amount;
       
+      const newCart = [...cart];
+      const indexNewAmountIcrement = cart.findIndex((item) => item.id === product.id);
+      newCart[indexNewAmountIcrement].amount += 1;
+      setCart(newCart);
     }
 
     function handleProductDecrement(product: Product){
       const newCart = [...cart];
-      const indexNewAmount = cart.findIndex((item) => item.id === product.id);
-      newCart[indexNewAmount].amount -= 1;
+      const indexNewAmountDecrement = cart.findIndex((item) => item.id === product.id);
+      newCart[indexNewAmountDecrement].amount -= 1;
       setCart(newCart);
     }
 
@@ -85,8 +91,8 @@
                   <button
                     type="button"
                     data-testid="increment-product"
-                  //disabled={input.value >=item.amount}  
-                  //onClick={() => handleProductIncrement()}
+                    disabled={ item.amount >= totalAmount[item.id].amount }  
+                    onClick={() => handleProductIncrement(item)}
                   >
                     <MdAddCircleOutline size={20} />
                   </button>

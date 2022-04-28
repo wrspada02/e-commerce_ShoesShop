@@ -28,7 +28,6 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
   const [totalAmount, setTotalAmount] = useState<Stock[]>([]);
-  const [amountItem, setAmountItem] = useState(0);
   const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const [{ id, image, price, title }] = newItem;
       await setCart([...cart, {
         id: id,
-        amount: 3,
+        amount: 1,
         image: image,
         price: price,
         title: title,
