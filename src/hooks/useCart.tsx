@@ -16,7 +16,7 @@ interface UpdateProductAmount {
 interface CartContextData {
   cart: Product[];
   products: ProductFormatted[];
-  amount: Stock[];
+  totalAmount: Stock[];
   addProduct: (productId: number) => Promise<void>;
   removeProduct: (productId: number) => Promise<void>;
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
@@ -26,7 +26,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
-  const [amount, setAmount] = useState<Stock[]>([]);
+  const [totalAmount, setTotalAmount] = useState<Stock[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -37,20 +37,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
     async function loadAmount(){
       await api.get('/stock')
-      .then(response => setAmount(response.data));
+      .then(response => setTotalAmount(response.data));
     }
 
     loadProducts();
     loadAmount();
   }, []);
 
+  
+
   const addProduct = async (productId: number) => {
     try {
       const newItem = products.filter((item) => item.id === productId);
+      const amountItem = totalAmount.filter((item) => item.id === productId);
       const [{ id, image, price, title }] = newItem;
       await setCart([...cart, {
         id: id,
-        amount: 5,
+        amount: amountItem[0].amount,
         image: image,
         price: price,
         title: title,
@@ -74,12 +77,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const updateProductAmount = ({productId, amount} : UpdateProductAmount) => {
     try {
-      const cartToUpdate = cart;
-      cartToUpdate.map((item) => {
-        if(productId === item.id) return item.amount -= 1;
-      });
-      console.log(cartToUpdate);
-      setCart(cartToUpdate);
+      const amountItem = totalAmount.filter((item) => item.id === productId);
+      const itemIndexCart = cart.findIndex((item) => item.id === productId);
+
+      const newCart = [...cart];
+      newCart[itemIndexCart].amount = Number(amountItem[0].amount);
+      setCart(newCart);
+      
+
+      console.log(totalAmount);
     } catch {
       toast.error('Quantidade solicitada fora de estoque');
     }
@@ -87,7 +93,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   return (
     <CartContext.Provider
-      value={{ cart, products, amount, addProduct, removeProduct, updateProductAmount }}
+      value={{ cart, products, totalAmount, addProduct, removeProduct, updateProductAmount }}
     >
       {children}
     </CartContext.Provider>

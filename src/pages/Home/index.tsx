@@ -17,7 +17,7 @@
   const Home = (): JSX.Element => {
 
 
-    const { addProduct, cart, products, amount } = useCart();
+    const { addProduct, cart, products, totalAmount } = useCart();
 
     //const cartItemsAmount = cart.reduce((sumAmount, product) => {
       // TODO
