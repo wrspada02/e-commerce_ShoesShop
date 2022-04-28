@@ -18,7 +18,7 @@
   }
 
   const Cart = (): JSX.Element => {
-    const { cart, removeProduct, updateProductAmount } = useCart();
+    const { cart, setCart, removeProduct, updateProductAmount } = useCart();
 
     // const cartFormatted = cart.map(product => ({
     //   // TODO
@@ -35,9 +35,10 @@
     }
 
     function handleProductDecrement(product: Product){
-      const { id, amount } = product;
-      const productId = id;
-      updateProductAmount({productId, amount});
+      const newCart = [...cart];
+      const indexNewAmount = cart.findIndex((item) => item.id === product.id);
+      newCart[indexNewAmount].amount -= 1;
+      setCart(newCart);
     }
 
     function handleRemoveProduct(productId: number) {

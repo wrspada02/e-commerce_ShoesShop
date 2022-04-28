@@ -20,6 +20,7 @@ interface CartContextData {
   addProduct: (productId: number) => Promise<void>;
   removeProduct: (productId: number) => Promise<void>;
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
+  setCart:([] : Product[]) => void;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
@@ -27,6 +28,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
   const [totalAmount, setTotalAmount] = useState<Stock[]>([]);
+  const [amountItem, setAmountItem] = useState(0);
   const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -49,11 +51,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const addProduct = async (productId: number) => {
     try {
       const newItem = products.filter((item) => item.id === productId);
-      const amountItem = totalAmount.filter((item) => item.id === productId);
       const [{ id, image, price, title }] = newItem;
       await setCart([...cart, {
         id: id,
-        amount: amountItem[0].amount,
+        amount: 3,
         image: image,
         price: price,
         title: title,
@@ -77,15 +78,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const updateProductAmount = ({productId, amount} : UpdateProductAmount) => {
     try {
-      const amountItem = totalAmount.filter((item) => item.id === productId);
-      const itemIndexCart = cart.findIndex((item) => item.id === productId);
 
-      const newCart = [...cart];
-      newCart[itemIndexCart].amount = Number(amountItem[0].amount);
-      setCart(newCart);
-      
-
-      console.log(totalAmount);
     } catch {
       toast.error('Quantidade solicitada fora de estoque');
     }
@@ -93,7 +86,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   return (
     <CartContext.Provider
-      value={{ cart, products, totalAmount, addProduct, removeProduct, updateProductAmount }}
+      value={{ cart, products, totalAmount, addProduct, removeProduct, updateProductAmount, setCart }}
     >
       {children}
     </CartContext.Provider>
