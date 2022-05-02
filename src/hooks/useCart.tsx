@@ -77,7 +77,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const updateProductAmount = ({productId, amount} : UpdateProductAmount) => {
     try {
-
+      
     } catch {
       toast.error('Quantidade solicitada fora de estoque');
     }

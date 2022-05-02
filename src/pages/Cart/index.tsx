@@ -23,32 +23,47 @@
     // const cartFormatted = cart.map(product => ({
     //   // TODO
     // }))
-    // const total =
-    //   formatPrice(
-    //     cart.reduce((sumTotal, product) => {
-    //       sumTotal += product.price * product.amount
-    //     }, 0)
-    //   );
+    const total = cart.reduce((sumTotal, product) => {
+        sumTotal += product.price * product.amount;
+        return sumTotal;
+      }, 0);
+
+
+
+    function returnDataCart(id : number){
+      const newArray = [...cart];
+      const positionArray = newArray.findIndex((item) => item.id === id);
+      return {
+        positionArray,
+        newArray
+      }
+    }
 
     function handleProductIncrement(product: Product) {
       const { id } = product;
-      const amountItem = totalAmount[id].amount;
-      
-      const newCart = [...cart];
-      const indexNewAmountIcrement = cart.findIndex((item) => item.id === product.id);
-      newCart[indexNewAmountIcrement].amount += 1;
-      setCart(newCart);
+      const dataCart = returnDataCart(id);
+      const { newArray, positionArray } = dataCart;
+      newArray[positionArray].amount += 1;
+
+      setCart(newArray);
+      //updateProductAmount();
     }
 
     function handleProductDecrement(product: Product){
-      const newCart = [...cart];
-      const indexNewAmountDecrement = cart.findIndex((item) => item.id === product.id);
-      newCart[indexNewAmountDecrement].amount -= 1;
-      setCart(newCart);
+      const { id } = product;
+      const dataCart = returnDataCart(id);
+      const { newArray, positionArray } = dataCart;
+      newArray[positionArray].amount -= 1;
+
+      setCart(newArray);
+
+      //updateProductAmount();
     }
 
     function handleRemoveProduct(productId: number) {
       removeProduct(productId);
+
+      //updateProductAmount();
     }
 
     return (
@@ -87,11 +102,12 @@
                     type="text"
                     data-testid="product-amount"
                     value={item.amount}
+                    readOnly={true}
                   />
                   <button
                     type="button"
                     data-testid="increment-product"
-                    disabled={ item.amount >= totalAmount[item.id].amount }  
+                    disabled={ item.amount >= totalAmount[item.id-1].amount }  
                     onClick={() => handleProductIncrement(item)}
                   >
                     <MdAddCircleOutline size={20} />
@@ -99,7 +115,7 @@
                 </div>
               </td>
               <td>
-                <strong>{formatPrice(item.price)}</strong>
+                <strong>{formatPrice(item.price * item.amount)}</strong>
               </td>
               <td>
                 <button
@@ -120,7 +136,7 @@
 
           <Total>
             <span>TOTAL</span>
-            <strong></strong>
+            <strong>{formatPrice(Number(total))}</strong>
           </Total>
         </footer>
       </Container>
