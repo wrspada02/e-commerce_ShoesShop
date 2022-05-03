@@ -49,15 +49,18 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      const newItem = products.filter((item) => item.id === productId);
-      const [{ id, image, price, title }] = newItem;
-      await setCart([...cart, {
-        id: id,
-        amount: 1,
-        image: image,
-        price: price,
-        title: title,
-      }]);
+      console.log(toVerifyCartId(productId));
+      if(toVerifyCartId(productId)){
+        const newItem = products.filter((item) => item.id === productId);
+        const [{ id, image, price, title }] = newItem;
+        await setCart([...cart, {
+          id: id,
+          amount: 1,
+          image: image,
+          price: price,
+          title: title,
+        }]);
+      }
     } catch {
       toast.error('Erro na adição do produto');
     }
@@ -82,6 +85,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       toast.error('Quantidade solicitada fora de estoque');
     }
   };
+
+  function toVerifyCartId(idCart: number){
+    for(let {id} of cart){
+      if(id === idCart){
+        return false;
+      }
+    }
+    return true;
+  }
 
   return (
     <CartContext.Provider

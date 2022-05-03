@@ -20,9 +20,6 @@
   const Cart = (): JSX.Element => {
     const { cart, totalAmount, setCart, removeProduct, updateProductAmount } = useCart();
 
-    // const cartFormatted = cart.map(product => ({
-    //   // TODO
-    // }))
     const total = cart.reduce((sumTotal, product) => {
         sumTotal += product.price * product.amount;
         return sumTotal;
